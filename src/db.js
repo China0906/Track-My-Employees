@@ -1,12 +1,25 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const pool = require('./db'); // Database connection
+const queries = require('./queries');
 
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-});
+// Fetch all employees
+const getAllEmployees = async () => {
+    const { rows } = await pool.query(queries.getAllEmployees);
+    return rows;
+};
 
-module.exports = pool;
+// Add a new employee
+const addEmployee = async (firstName, lastName, roleId, managerId) => {
+    await pool.query(queries.addEmployee, [firstName, lastName, roleId, managerId]);
+};
+
+// Update an employee's role
+const updateEmployeeRole = async (employeeId, newRoleId) => {
+    await pool.query(queries.updateEmployeeRole, [newRoleId, employeeId]);
+};
+
+// Export functions
+module.exports = {
+    getAllEmployees,
+    addEmployee,
+    updateEmployeeRole,
+};
